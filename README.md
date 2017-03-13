@@ -12,7 +12,7 @@
 
 * 以下の形式でhtmlを作成するとSlide Viewerが適用される
 
-````
+````html
 <div class="slide-images">
   <img class="slide-image" src="images/image1.png" alt="image1">
   <img class="slide-image" src="images/image2.png" alt="image2">
