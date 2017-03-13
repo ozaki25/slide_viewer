@@ -13,8 +13,8 @@
     SlideViewer.prototype.showToolbar = function() {
         var toolbar = $('<div>').addClass('toolbar')
         var pager = this.getPagerHtml()
-        this.$prev = this.getChangeIconHtml('prev')
-        this.$next = this.getChangeIconHtml('next')
+        this.$prev = this.getChangeSlideIconHtml('prev')
+        this.$next = this.getChangeSlideIconHtml('next')
         toolbar.append(this.$prev).append(pager).append(this.$next)
         this.$element.append(toolbar)
     }
@@ -26,7 +26,7 @@
         return pager.append(this.$currentPage).append(' / ').append(this.$totalPage)
     }
 
-    SlideViewer.prototype.getChangeIconHtml = function(direction) {
+    SlideViewer.prototype.getChangeSlideIconHtml = function(direction) {
         var div = $('<div>').addClass('change-slide').addClass(direction).data('direction', direction)
         var icon = $('<span>').addClass(this.getIconClass(direction))
         return div.append(icon)
@@ -38,7 +38,7 @@
     }
 
     SlideViewer.prototype.change = function(direction) {
-        var next = this.getNextNum(direction)
+        var next = this.getNextSlideNum(direction)
         if(next < 0 || this.$slides.length <= next) return
 
         this.current = next
@@ -48,7 +48,7 @@
         this.changePageNum()
     }
 
-    SlideViewer.prototype.getNextNum = function(direction) {
+    SlideViewer.prototype.getNextSlideNum = function(direction) {
         return direction === 'prev' ? this.current - 1 :
                direction === 'next' ? this.current + 1 : this.current
     }
@@ -60,8 +60,8 @@
     }
 
     SlideViewer.prototype.showSlide = function() {
-        var slide = $(this.$slides.get(this.current))
-        $(slide).show().addClass('active')
+        var $slide = $(this.$slides.get(this.current))
+        $slide.show().addClass('active')
     }
 
     SlideViewer.prototype.startOrEndDisabled = function() {
@@ -85,7 +85,7 @@
 
     var old = $.fn.slideViewer
 
-    $.fn.slideViewer             = Plugin
+    $.fn.slideViewer = Plugin
     $.fn.slideViewer.Constructor = SlideViewer
 
     $.fn.tooltip.noConflict = function () {
