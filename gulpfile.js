@@ -14,12 +14,13 @@ gulp.task('build', () => {
 });
 
 gulp.task('browserify', () => {
-    browserify('./js/app.js', {
+    browserify('./js/app_es2015.js', {
         debug:   true,
     })
+        .transform(babelify)
         .bundle()
-        .pipe(source('bundle.js'))
-        .pipe(gulp.dest('./dist/'));
+        .pipe(source('dist_es2015.js'))
+        .pipe(gulp.dest('./js/'));
 });
 
 gulp.task('watch', () => {
@@ -36,7 +37,7 @@ gulp.task('server', () => {
 });
 
 gulp.task('lint', () => {
-    gulp.src('./js/app.js')
+    gulp.src('./js/app*.js')
         .pipe(eslint())
         .pipe(eslint.format())
         .pipe(eslint.failAfterError());
