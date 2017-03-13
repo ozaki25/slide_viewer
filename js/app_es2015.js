@@ -1,7 +1,7 @@
 +function($) {
     'use strict'
 
-    var SlideViewer = function(element) {
+    let SlideViewer = function(element) {
         this.$element = $(element)
         this.$slides = this.$element.children('.slide-image')
         this.current = 0
@@ -11,8 +11,8 @@
     }
 
     SlideViewer.prototype.showToolbar = function() {
-        var toolbar = $('<div>').addClass('toolbar')
-        var pager = this.getPagerHtml()
+        let toolbar = $('<div>').addClass('toolbar')
+        let pager = this.getPagerHtml()
         this.$prev = this.getChangeSlideIconHtml('prev')
         this.$next = this.getChangeSlideIconHtml('next')
         toolbar.append(this.$prev).append(pager).append(this.$next)
@@ -20,15 +20,15 @@
     }
 
     SlideViewer.prototype.getPagerHtml = function() {
-        var pager = $('<div>').addClass('slide-pager')
+        let pager = $('<div>').addClass('slide-pager')
         this.$currentPage = $('<span>').addClass('current-page')
         this.$totalPage = $('<span>').addClass('total-page')
         return pager.append(this.$currentPage).append(' / ').append(this.$totalPage)
     }
 
     SlideViewer.prototype.getChangeSlideIconHtml = function(direction) {
-        var div = $('<div>').addClass('change-slide').addClass(direction).data('direction', direction)
-        var icon = $('<span>').addClass(this.getIconClass(direction))
+        let div = $('<div>').addClass('change-slide').addClass(direction).data('direction', direction)
+        let icon = $('<span>').addClass(this.getIconClass(direction))
         return div.append(icon)
     }
 
@@ -38,7 +38,7 @@
     }
 
     SlideViewer.prototype.change = function(direction) {
-        var next = this.getNextSlideNum(direction)
+        let next = this.getNextSlideNum(direction)
         if(next < 0 || this.$slides.length <= next) return
 
         this.current = next
@@ -60,7 +60,7 @@
     }
 
     SlideViewer.prototype.showSlide = function() {
-        var $slide = $(this.$slides.get(this.current))
+        let $slide = $(this.$slides.get(this.current))
         $slide.show().addClass('active')
     }
 
@@ -76,14 +76,14 @@
 
     function Plugin(option) {
         return this.each(function() {
-            var $this = $(this)
-            var data = $this.data('slide-viewer')
+            let $this = $(this)
+            let data = $this.data('slide-viewer')
             if (!data) $this.data('slide-viewer', (data = new SlideViewer(this, option)))
             if(option && option.change) data.change(option.change)
         })
     }
 
-    var old = $.fn.slideViewer
+    let old = $.fn.slideViewer
 
     $.fn.slideViewer = Plugin
     $.fn.slideViewer.Constructor = SlideViewer
@@ -95,9 +95,9 @@
 
 
     $(document).on('click', '.change-slide', function() {
-        var $this = $(this)
-        var $target = $this.closest('.slide-images')
-        var option = { change: $this.data('direction') }
+        let $this = $(this)
+        let $target = $this.closest('.slide-images')
+        let option = { change: $this.data('direction') }
         Plugin.call($target, option)
     })
 
