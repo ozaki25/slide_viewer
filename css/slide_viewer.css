@@ -1,0 +1,38 @@
+.slide-images {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.slide-image {
+    max-width: 100%;
+}
+
+.toolbar {
+    color: white;
+    background-color: black;
+    text-align: center;
+}
+
+.change-slide {
+    color: white;
+    cursor: pointer;
+    display: inline;
+    font-size: 150%;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.change-slide:hover,
+.change-slide:focus {
+    color: white;
+}
+
+.change-slide.disabled {
+    color: gray;
+    cursor: not-allowed;
+    text-decoration: none;
+}
+
+.slide-pager {
+    display: inline;
+}
