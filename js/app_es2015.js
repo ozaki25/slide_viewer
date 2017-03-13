@@ -1,108 +1,112 @@
-+function($) {
-    'use strict'
++(($) => {
 
-    let SlideViewer = function(element) {
-        this.$element = $(element)
-        this.$slides = this.$element.children('.slide-image')
-        this.current = 0
+    class SlideViewer {
+        constructor(element) {
+            this.$element = $(element)
+            this.$slides = this.$element.children('.slide-image')
+            this.current = 0
 
-        this.showToolbar()
-        this.change()
+            this.showToolbar()
+            this.change()
+        }
+
+        showToolbar() {
+            const toolbar = $('<div>').addClass('toolbar')
+            const pager = this.getPagerHtml()
+            this.$prev = this.getChangeSlideIconHtml('prev')
+            this.$next = this.getChangeSlideIconHtml('next')
+            toolbar.append(this.$prev).append(pager).append(this.$next)
+            this.$element.append(toolbar)
+        }
+
+        getPagerHtml() {
+            const pager = $('<div>').addClass('slide-pager')
+            this.$currentPage = $('<span>').addClass('current-page')
+            this.$totalPage = $('<span>').addClass('total-page')
+            return pager.append(this.$currentPage).append(' / ').append(this.$totalPage)
+        }
+
+        getChangeSlideIconHtml(direction) {
+            const div = $('<div>').addClass('change-slide').addClass(direction).data('direction', direction)
+            const icon = $('<span>').addClass(this.getIconClass(direction))
+            return div.append(icon)
+        }
+
+        getIconClass(direction) {
+            return direction === 'prev' ? 'glyphicon glyphicon-chevron-left' :
+                   direction === 'next' ? 'glyphicon glyphicon-chevron-right' : ''
+        }
+
+        change(direction) {
+            const next = this.getNextSlideNum(direction)
+            if(this.isOutOfRange(next)) return
+
+            this.current = next
+            this.reset()
+            this.showSlide()
+            this.startOrEndDisabled()
+            this.changePageNum()
+        }
+
+        getNextSlideNum(direction) {
+            return direction === 'prev' ? this.current - 1 :
+                   direction === 'next' ? this.current + 1 : this.current
+        }
+
+        isOutOfRange(num) {
+            return num < 0 || this.$slides.length <= num
+        }
+
+        reset() {
+            this.$slides.hide().removeClass('active')
+            this.$prev.removeClass('disabled')
+            this.$next.removeClass('disabled')
+        }
+
+        showSlide() {
+            const $slide = $(this.$slides.get(this.current))
+            $slide.show().addClass('active')
+        }
+
+        startOrEndDisabled() {
+            if(this.current === 0) this.$prev.addClass('disabled')
+            if(this.current === this.$slides.length - 1) this.$next.addClass('disabled')
+        }
+
+        changePageNum() {
+            this.$currentPage.text(this.current + 1)
+            this.$totalPage.text(this.$slides.length)
+        }
+
+        static jQueryInterface(option) {
+            return this.each(function() {
+                const $this = $(this)
+                let data = $this.data('slide-viewer')
+                if(!data) {
+                    data = new SlideViewer(this, option)
+                    $this.data('slide-viewer', data)
+                }
+                if(option && option.change) data.change(option.change)
+            })
+        }
     }
-
-    SlideViewer.prototype.showToolbar = function() {
-        let toolbar = $('<div>').addClass('toolbar')
-        let pager = this.getPagerHtml()
-        this.$prev = this.getChangeSlideIconHtml('prev')
-        this.$next = this.getChangeSlideIconHtml('next')
-        toolbar.append(this.$prev).append(pager).append(this.$next)
-        this.$element.append(toolbar)
-    }
-
-    SlideViewer.prototype.getPagerHtml = function() {
-        let pager = $('<div>').addClass('slide-pager')
-        this.$currentPage = $('<span>').addClass('current-page')
-        this.$totalPage = $('<span>').addClass('total-page')
-        return pager.append(this.$currentPage).append(' / ').append(this.$totalPage)
-    }
-
-    SlideViewer.prototype.getChangeSlideIconHtml = function(direction) {
-        let div = $('<div>').addClass('change-slide').addClass(direction).data('direction', direction)
-        let icon = $('<span>').addClass(this.getIconClass(direction))
-        return div.append(icon)
-    }
-
-    SlideViewer.prototype.getIconClass = function(direction) {
-        return direction === 'prev' ? 'glyphicon glyphicon-chevron-left' :
-               direction === 'next' ? 'glyphicon glyphicon-chevron-right' : ''
-    }
-
-    SlideViewer.prototype.change = function(direction) {
-        let next = this.getNextSlideNum(direction)
-        if(next < 0 || this.$slides.length <= next) return
-
-        this.current = next
-        this.reset()
-        this.showSlide()
-        this.startOrEndDisabled()
-        this.changePageNum()
-    }
-
-    SlideViewer.prototype.getNextSlideNum = function(direction) {
-        return direction === 'prev' ? this.current - 1 :
-               direction === 'next' ? this.current + 1 : this.current
-    }
-
-    SlideViewer.prototype.reset = function() {
-        this.$slides.hide().removeClass('active')
-        this.$prev.removeClass('disabled')
-        this.$next.removeClass('disabled')
-    }
-
-    SlideViewer.prototype.showSlide = function() {
-        let $slide = $(this.$slides.get(this.current))
-        $slide.show().addClass('active')
-    }
-
-    SlideViewer.prototype.startOrEndDisabled = function() {
-        if(this.current === 0) this.$prev.addClass('disabled')
-        if(this.current === this.$slides.length - 1) this.$next.addClass('disabled')
-    }
-
-    SlideViewer.prototype.changePageNum = function() {
-        this.$currentPage.text(this.current + 1)
-        this.$totalPage.text(this.$slides.length)
-    }
-
-    function Plugin(option) {
-        return this.each(function() {
-            let $this = $(this)
-            let data = $this.data('slide-viewer')
-            if (!data) $this.data('slide-viewer', (data = new SlideViewer(this, option)))
-            if(option && option.change) data.change(option.change)
-        })
-    }
-
-    let old = $.fn.slideViewer
-
-    $.fn.slideViewer = Plugin
-    $.fn.slideViewer.Constructor = SlideViewer
-
-    $.fn.tooltip.noConflict = function () {
-        $.fn.tooltip = old
-        return this
-    }
-
 
     $(document).on('click', '.change-slide', function() {
-        let $this = $(this)
-        let $target = $this.closest('.slide-images')
-        let option = { change: $this.data('direction') }
-        Plugin.call($target, option)
+        const $this = $(this)
+        const $target = $this.closest('.slide-images')
+        const option = { change: $this.data('direction') }
+        SlideViewer.jQueryInterface.call($target, option)
     })
 
-    $(function() {
-        $('.slide-images').slideViewer()
-    })
+    $.fn.slideViewer = SlideViewer.jQueryInterface
+    $.fn.slideViewer.Constructor = SlideViewer
+    $.fn.slideViewer.noConflict = () => {
+        $.fn.slideViewer = $.fn.slideViewer
+        return SlideViewer.jQueryInterface
+    }
 
-}(jQuery);
+    $(() => $('.slide-images').slideViewer())
+
+    return SlideViewer
+
+})(jQuery);
